@@ -8,9 +8,9 @@ use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 
 mod errors;
+mod models;
 mod routes;
 mod schema;
-mod models;
 
 type Pool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
 
@@ -20,22 +20,20 @@ pub struct Blog {
 
 impl Blog {
     pub fn new(port: u16) -> Self {
-        Blog {
-            port
-        }
+        Blog { port }
     }
 
     pub async fn run(&self, db_url: String) -> std::io::Result<()> {
         let manager = ConnectionManager::<SqliteConnection>::new(db_url);
         let pool = r2d2::Pool::builder()
-                    .build(manager)
-                    .expect("Failed to create pool");
+            .build(manager)
+            .expect("Failed to create pool");
         println!("Starting HTTP Server: 127.0.0.1:{}", self.port);
         HttpServer::new(move || {
             App::new()
-            .data(pool.clone())
-            .wrap(middleware::Logger::default())
-            .configure(routes::users::configure)
+                .data(pool.clone())
+                .wrap(middleware::Logger::default())
+                .configure(routes::users::configure)
         })
         .bind(("127.0.0.1", self.port))?
         .run()

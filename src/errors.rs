@@ -17,16 +17,15 @@ struct ErrorResponse {
     err: String,
 }
 
-
 impl actix_web::ResponseError for AppError {
     fn error_response(&self) -> HttpResponse {
-        let err = format!{"{}", self};
-        let mut builder  = match self {
+        let err = format! {"{}", self};
+        let mut builder = match self {
             AppError::RecordAlreadyExists => HttpResponse::BadRequest(),
             AppError::RecordNotFound => HttpResponse::NotFound(),
             _ => HttpResponse::InternalServerError(),
         };
-        builder.json(ErrorResponse {err})
+        builder.json(ErrorResponse { err })
     }
 }
 
@@ -44,7 +43,7 @@ impl fmt::Display for AppError {
 impl From<diesel::result::Error> for AppError {
     fn from(e: diesel::result::Error) -> Self {
         match e {
-            DatabaseError(UniqueViolation, _ ) => AppError::RecordAlreadyExists,
+            DatabaseError(UniqueViolation, _) => AppError::RecordAlreadyExists,
             NotFound => AppError::RecordNotFound,
             _ => AppError::DatabaseError(e),
         }
