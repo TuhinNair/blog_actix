@@ -10,8 +10,8 @@ struct UserInput {
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(web::resource("/users").route(web::post().to(create_user)))
-    .service(web::resource("/users/find/{name}").route(web::get().to(find_user)))
-    .service(web::resource("/users/{id}").route(web::get().to(get_user)));
+        .service(web::resource("/users/find/{name}").route(web::get().to(find_user)))
+        .service(web::resource("/users/{id}").route(web::get().to(get_user)));
 }
 
 async fn create_user(
